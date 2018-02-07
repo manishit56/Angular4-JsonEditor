@@ -1,22 +1,33 @@
-import { Component, OnInit, ElementRef, Input } from '@angular/core';
+import {Component, ElementRef, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as editor from 'jsoneditor';
 
 @Component({
-  selector: 'json-editor',
+  selector: 'az-jsoneditor',
   template: '<div></div>'
 })
+export class JsoneditorComponent implements OnInit {
 
-export class JsonEditorComponent implements OnInit {
-  private editor: any;
+  private editor: editor;
   private optionsDiffer: any;
   private dataDiffer: any;
 
   @Input() options: JsonEditorOptions = new JsonEditorOptions();
   @Input() data: Object = {};
 
-  constructor(private rootElement: ElementRef) { }
+  @Output()
+  updatedContent: EventEmitter<JSON>;
+
+  constructor(private rootElement: ElementRef) {
+    this.updatedContent = new EventEmitter<JSON>();
+  }
 
   ngOnInit() {
+    const onChangeNotDefined = this.options.onChange == null;
+    if (onChangeNotDefined) {
+      this.options.onChange = () => {
+        this.updatedContent.emit(this.get());
+      };
+    }
     this.editor = new editor(this.rootElement.nativeElement, this.options, this.data);
   }
 
@@ -32,7 +43,7 @@ export class JsonEditorComponent implements OnInit {
     this.editor.focus();
   }
 
-  public get(): JSON {
+  public get() {
     return this.editor.get();
   }
 
@@ -102,6 +113,7 @@ export class JsonEditorOptions {
     this.mode = 'tree';
     this.search = true;
     this.indentation = 2;
+    this.onChange = null;
   }
 
 }
