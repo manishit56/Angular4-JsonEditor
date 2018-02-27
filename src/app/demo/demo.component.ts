@@ -1,5 +1,4 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-//import { Ng4JsonEditorModule } from '../component/ng4-jsoneditor/ng4-jsoneditor.module';
 import { JsonEditorComponent, JsonEditorOptions } from '../component/jsoneditor/jsoneditor.component';
 
 @Component({
@@ -14,16 +13,53 @@ export class DemoComponent implements OnInit {
 
   @ViewChild(JsonEditorComponent) editor: JsonEditorComponent;
 
-  constructor() { 
+  constructor() {
     this.editorOptions = new JsonEditorOptions()
   }
 
   ngOnInit() {
-      this.editorOptions.modes = ['code', 'text', 'tree', 'view']; // set all allowed modes
-      //this.options.mode = 'code'; //set only one mode
-      
-      this.data = {"products":[{"name":"car","product":[{"name":"honda","model":[{"id":"civic","name":"civic"},{"id":"accord","name":"accord"},{"id":"crv","name":"crv"},{"id":"pilot","name":"pilot"},{"id":"odyssey","name":"odyssey"}]}]}]}
-      
+
+    this.data = {
+      'products': [
+        {
+          'name': 'car',
+          'product':
+            [
+              {
+                'name': 'honda',
+                'model': [
+                  { 'id': 'civic', 'name': 'civic' },
+                  { 'id': 'accord', 'name': 'accord' }, { 'id': 'crv', 'name': 'crv' },
+                  { 'id': 'pilot', 'name': 'pilot' }, { 'id': 'odyssey', 'name': 'odyssey' }
+                ]
+              }
+            ]
+        }
+      ]
+    }
+
+  }
+
+  initEditorOptions() {
+    // this.editorOptions.mode = 'code'; //set only one mode
+    this.editorOptions.modes = ['code', 'text', 'tree', 'view']; // set all allowed modes
+  }
+
+  setLanguage(lang) {
+    this.editorOptions.language = lang; // force a specific language, ie. pt-BR
+    this.editor.setOptions(this.editorOptions);
+  }
+
+  customLanguage() {
+    this.editorOptions.languages = {
+      'pt-BR': {
+        'auto': 'Automático testing'
+      },
+      'en': {
+        'auto': 'Auto testing'
+      }
+    };
+    this.editor.setOptions(this.editorOptions);
   }
 
 }

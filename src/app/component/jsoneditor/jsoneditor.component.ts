@@ -1,9 +1,10 @@
-import { Component, OnInit, ElementRef, Input } from '@angular/core';
+import { Component, OnInit, ElementRef, Input, ViewChild } from '@angular/core';
 import * as editor from 'jsoneditor';
 
 @Component({
+  // tslint:disable-next-line:component-selector
   selector: 'json-editor',
-  template: '<div></div>'
+  template: '<div #jsonEditorContainer></div>'
 })
 
 export class JsonEditorComponent implements OnInit {
@@ -11,13 +12,15 @@ export class JsonEditorComponent implements OnInit {
   private optionsDiffer: any;
   private dataDiffer: any;
 
+  @ViewChild('jsonEditorContainer') jsonEditorContainer: ElementRef;
+
   @Input() options: JsonEditorOptions = new JsonEditorOptions();
   @Input() data: Object = {};
 
-  constructor(private rootElement: ElementRef) { }
+  constructor() { }
 
   ngOnInit() {
-    this.editor = new editor(this.rootElement.nativeElement, this.options, this.data);
+    this.editor = new editor(this.jsonEditorContainer.nativeElement, this.options, this.data);
   }
 
   public collapseAll() {
@@ -64,6 +67,14 @@ export class JsonEditorComponent implements OnInit {
     this.editor.setSchema(schema);
   }
 
+  public setOptions(newOptions: JsonEditorOptions) {
+    if (this.editor) {
+      this.editor.destroy();
+    }
+    this.options = newOptions;
+    this.ngOnInit();
+  }
+
   public destroy() {
     this.editor.destroy();
   }
@@ -94,6 +105,8 @@ export class JsonEditorOptions {
   public search: boolean;
   public indentation: Number;
   public theme: Number;
+  public language: String;
+  public languages: Object;
 
   constructor() {
     this.escapeUnicode = false;
